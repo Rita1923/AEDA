@@ -1,0 +1,4 @@
+2 Joao Silva Comercial 1 3 3 200 NULO 3 Porto Lisboa Autocarro 40 Lisboa Madrid Aviao 100 Madrid Bruxelas Aviao 100 340 Hotel 3 Lisboa Madrid Aviao 100 Madrid Bruxelas Aviao 100 Bruxelas Moscovo Aviao 100 50 NULO 2 Porto Coimbra Comboio 20 Coimbra Aveiro Autocarro 30 2 Ana Ascensao Particular 2 200 NULO 3 Porto Lisboa Autocarro 40 Lisboa Madrid Aviao 100 Madrid Bruxelas Aviao 100 50 NULO 2 Porto Coimbra Comboio 20 Coimbra Aveiro Autocarro 30 
+200 NULO 3 Porto Lisboa Autocarro 40 Lisboa Madrid Aviao 100 Madrid Bruxelas Aviao 100 50 NULO 2 Porto Coimbra Comboio 20 Coimbra Aveiro Autocarro 30 
+Porto Lisboa Autocarro 40 Lisboa Madrid Aviao 100 Madrid Bruxelas Aviao 100 Bruxelas Moscovo Aviao 100 Lisboa Faro Autocarro 20 Porto Coimbra Comboio 20 Coimbra Aveiro Autocarro 30 Porto Londres Aviao 50 Londres Nova Iorque Aviao 200 Nova Iorque Austin Aviao 400 
+Hotel Moscovo 40 
