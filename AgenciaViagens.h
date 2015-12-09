@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <fstream>
 #include <sstream>
+#include <unordered_map>
 
 using namespace std;
 
@@ -15,62 +16,6 @@ class Troco;
 class Alojamento;
 class Pacote;
 
-class Agencia {
-private:
-	struct node {
-		string valor;
-		int parente;
-	};
-	vector<vector<node> > caminhos;
-	vector<Cliente*> clientes;
-	vector<Pacote> pacotes;
-	vector<Troco> trocos;
-	vector<Alojamento> alojamentos;
-	// vector<Itinerario> itinerarios;
-public:
-	Agencia();
-	~Agencia(){}
-	int numViagens() const;
-	int numClientes() const;
-	void adicionaCliente(Cliente* cli);
-	bool apagaCliente(string nomeCli);
-	void adicionarPacote(Pacote pacote);
-	void venderPacote(string nomeCliente, string origem, string destino, int n = 1);
-	// Modificar os vectores!!
-	vector<Cliente*> getClientes();
-	// vector<Itinerario*> getItinerarios();
-	// void adicionaItinerario(Itinerario itn);
-	// bool apagaItinerario(string origem, string destino);
-
-	vector<int> getAdjacentes(int indice);
-	vector< vector<node> > getCaminhos();
-	void adicionarTroco(Troco troco);
-	vector<string> encontrarCaminho(string origem, string destino);
-	Itinerario criarItinerario(vector<string> caminho);
-	//void venderViagem(string nomeCliente, string origem, string destino);
-	void venderViagem(string nomeCliente, string origem, string destino, string alojamento = "NULO", int n = 1);
-	void mostrarHistorico(string nomeCliente);
-
-	void mostrarClientes();
-	void mostrarTrocos();
-	void mostrarPacotes();
-	void mostrarAlojamentos();
-
-	bool gravarAgencia(string filepath);
-	bool carregarAgencia(string filepath);
-
-	void adicionarAlojamento(Alojamento alojamento);
-
-	/***************/
-
-	class ExcecaoClienteNaoExistente{};
-	class ExcecaoPacoteNaoExistente{};
-	class ExcecaoOrigemNaoExistente{};
-	class ExcecaoDestinoNaoExistente{};
-	class ExcecaoCaminhoNaoExistente{};
-	class ExcecaoAlojamentoNaoDisponivel{};
-};
-
 class Cliente {
 protected:
 	string nome;
@@ -80,7 +25,7 @@ public:
 		nome=n;
 	}
 	virtual ~Cliente(){}
-	string getNome(){return nome;}
+	string getNome() const {return nome;}
 	virtual float calcDesconto() = 0;
 	virtual void adicionarViagem(Viagem* viagem, int n);
 	void mostrarHistorico();
@@ -106,6 +51,28 @@ public:
 	void setTotalParticipantes(int tot) { totalParticipantes = tot; }
 	void adicionarViagem(Viagem* viagem, int n);
 };
+
+struct eqCliente {
+	bool operator()(const Cliente *cli1, const Cliente *cli2) const {
+		return cli1->getNome() == cli2->getNome();
+	}
+};
+
+struct hashCliente {
+
+	int operator()(const Cliente *cli) const {
+	   int seed = 31;
+	   unsigned long hash = 0;
+	   for(int i = 0; i < cli->getNome().length(); i++)
+	   {
+		  hash = (hash * seed) + cli->getNome()[i];
+	   }
+	   return hash;
+	}
+
+};
+
+typedef unordered_map<Cliente*, hashCliente, eqCliente> HashTableClientes;
 
 class Itinerario {
 private:
@@ -175,4 +142,58 @@ public:
 	Pacote(Itinerario itinerario, float preco, Alojamento &alojamento);
 	void mostrar();
 	string infoString();
+};
+
+class Agencia {
+private:
+	struct node {
+		string valor;
+		int parente;
+	};
+	vector<vector<node> > caminhos;
+	vector<Cliente*> clientes;
+	vector<Pacote> pacotes;
+	vector<Troco> trocos;
+	vector<Alojamento> alojamentos;
+	HashTableClientes clientesAntigos;
+	int limAntigos = 2; //Número de anos a partir do qual se é considerado cliente antigo
+public:
+	Agencia();
+	~Agencia(){}
+	int numViagens() const;
+	int numClientes() const;
+	void adicionaCliente(Cliente* cli);
+	bool apagaCliente(string nomeCli);
+	void adicionarPacote(Pacote pacote);
+	void venderPacote(string nomeCliente, string origem, string destino, int n = 1);
+	int getHashSize(){return clientesAntigos.size();}
+	// Modificar os vectores!!
+	vector<Cliente*> getClientes();
+
+	vector<int> getAdjacentes(int indice);
+	vector< vector<node> > getCaminhos();
+	void adicionarTroco(Troco troco);
+	vector<string> encontrarCaminho(string origem, string destino);
+	Itinerario criarItinerario(vector<string> caminho);
+	void venderViagem(string nomeCliente, string origem, string destino, string alojamento = "NULO", int n = 1);
+	void mostrarHistorico(string nomeCliente);
+
+	void mostrarClientes();
+	void mostrarTrocos();
+	void mostrarPacotes();
+	void mostrarAlojamentos();
+
+	bool gravarAgencia(string filepath);
+	bool carregarAgencia(string filepath);
+
+	void adicionarAlojamento(Alojamento alojamento);
+
+	/***************/
+
+	class ExcecaoClienteNaoExistente{};
+	class ExcecaoPacoteNaoExistente{};
+	class ExcecaoOrigemNaoExistente{};
+	class ExcecaoDestinoNaoExistente{};
+	class ExcecaoCaminhoNaoExistente{};
+	class ExcecaoAlojamentoNaoDisponivel{};
 };
